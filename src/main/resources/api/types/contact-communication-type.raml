@@ -1,0 +1,23 @@
+#%RAML 1.0 DataType
+description: Communitcation contact info type
+properties:
+  id:
+    description: Communication channel Id
+    type: integer
+    required: false
+    example: 1    
+  'type': 
+    description: Communication Channel type
+    enum: [email, cell]
+    example: email
+    required: false
+  'value': 
+    description: Communication channel value
+    type: string
+    example: 'bfe@sample.com'
+    required: false
+  preferred:
+    description: Indicates whether the communication channgel type is the preferred or not
+    type: boolean
+    example: true
+    required: false

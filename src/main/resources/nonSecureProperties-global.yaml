@@ -1,0 +1,6 @@
+
+https:
+    port: "8082"
+    host: "0.0.0.0"
+    path: "/*"
+    pathConsole: "/console/*"

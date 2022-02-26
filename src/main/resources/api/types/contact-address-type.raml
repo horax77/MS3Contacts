@@ -1,0 +1,45 @@
+#%RAML 1.0 DataType
+description: Represents a Contact address
+type: object
+properties:
+  id:
+    description: User unique Key
+    type: integer
+    required: false
+    example: 1  
+  'type': 
+    description: address type
+    enum: [home, work, alternative]
+    example: home
+    required: false         
+  number:
+    type: string
+    description: address number
+    required: false
+    example: '1234'
+  street:
+    description: address street
+    type: string
+    required: false
+    example: 'blah blah St'
+  unit:
+    description: address unit
+    type: string
+    required: false
+    example: '1 a'
+  city:
+    description: address city
+    type: string
+    required: false
+    example: 'Somewhere'
+  state:
+    description: address state
+    type: string
+    required: false
+    example: 'SW'
+  zip:
+    description: address zip code
+    type: string
+    required: false
+    example: '12345'
+      

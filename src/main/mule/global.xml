@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="08b3fa68-75de-42e8-81b5-59fc31601fd9" file="securedProperties-${env}.yaml" key="${muleKey}" />
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="aa781937-7929-4324-baa0-bd1e3309138b" >
+		<db:mssql-connection host="${secure::db.host}" port="${secure::db.port}" user="${secure::db.user}" password="${secure::db.pass}" databaseName="Contacts" />
+	</db:config>
+	<global-property doc:name="Global Property" doc:id="9b331ee1-2eb0-4f60-8ce8-ad5b748fef50" name="env" value="dev" />
+	<global-property doc:name="Global Property" doc:id="f02b971d-4444-4d3a-8417-29faeee6d758" name="muleKey" value="!muleKeyMS3!!!!!" />
+	<configuration-properties doc:name="Configuration properties" doc:id="7903fc9a-11f8-4928-a554-2d005ecd6d27" file="nonSecureProperties-global.yaml" />
+
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="524a4ac5-6a6d-4585-b5da-4f05b781515c" >
+		<http:listener-connection protocol="HTTPS" host="${https.host}" port="${https.port}" tlsContext="TLS_Context">
+		</http:listener-connection>
+	</http:listener-config>
+	<tls:context name="TLS_Context" doc:name="TLS Context" doc:id="30bc4113-1ed3-4f2b-b02d-0549aaf14df4" >
+		<tls:trust-store insecure="true" />
+		<tls:key-store type="jks" keyPassword="${secure::keystore.password}" password="${secure::keystore.password}" path="keystore.jks"/>
+	</tls:context>
+    <apikit:config name="sys-ms3contacts-env-api-config" api="sys-ms3contacts-env-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />	
+	
+</mule>

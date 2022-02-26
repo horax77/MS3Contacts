@@ -1,0 +1,17 @@
+%dw 2.0
+
+type auto_ed90960e_9516_4da5_b0c1_01477056885e_Output_Payload = {
+  identification: {
+    firstName?: String, 
+    lastName?: String, 
+    address?: Array<{      zip?: String,       number?: String,       unit?: String,       city?: String,       street?: String,       id?: Number,       state?: String,       "type"?: "home",       _?: Any    } {"description": "Represents a Contact address"}>, 
+    gender?: String, 
+    DOB?: String, 
+    id?: Number, 
+    title?: String, 
+    communication?: Array<{      id?: Number,       "type"?: "cell" | "email",       value?: String,       preferred?: Boolean,       _?: Any    } {"description": "Communitcation contact info type"}>, 
+    _?: Any
+  }, 
+  _?: Any
+} {"description": "Contact"}
+

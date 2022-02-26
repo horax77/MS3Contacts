@@ -9,9 +9,13 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 			<ee:transform doc:name="Error Response" doc:id="81733a68-993c-46cb-8a84-ad519c807f17" >
 				<ee:message >
 					<ee:set-payload ><![CDATA[%dw 2.0
-output application/java
+output application/json
 ---
 {
+	error:
+	{
+		description: error.description
+	}
 }]]></ee:set-payload>
 				</ee:message>
 			</ee:transform>

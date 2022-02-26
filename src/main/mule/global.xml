@@ -24,6 +24,7 @@ http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/
 		<tls:trust-store insecure="true" />
 		<tls:key-store type="jks" keyPassword="${secure::keystore.password}" password="${secure::keystore.password}" path="keystore.jks"/>
 	</tls:context>
-    <apikit:config name="sys-ms3contacts-env-api-config" api="sys-ms3contacts-env-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />	
+    <apikit:config name="sys-ms3contacts-env-api-config" api="sys-ms3contacts-env-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+	<configuration doc:name="Configuration" doc:id="2c4e8b3f-6624-4b7c-8c59-58561d29043d" defaultErrorHandler-ref="global-error-handlerError_Handler" />	
 	
 </mule>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	
+    <flow name="put:\contacts\(id)\address\(addressId):application\json:sys-ms3contacts-env-api-config">
+        <logger level="INFO" doc:name="START" doc:id="1f29b7f3-2a50-4192-bf2a-b3c0a7e34f47" message="START put:\contacts\(id)\address\ - #[payload] - #[vars.correlationId]"/>
+        <db:update doc:name="Address By Id" doc:id="7d2cbc48-ee9c-4449-b210-33e95074bbe2" config-ref="Database_Config">
+			<db:sql ><![CDATA[Update ContactAdress
+Set TypeId = :TypeId,
+    Street = :Street,
+    StreetNumber = :StreetNumber,
+    Unit= :Unit,
+    City= :City,
+    SateId= :SateId,
+    ZipCode= :ZipCode
+Where Id = :Id and ContactId = :ContactId]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+Id: attributes.uriParams.addressId,
+ContactId: attributes.uriParams.id,
+TypeId: payload.typeId,
+Street: payload.street,
+StreetNumber: payload.streetNumber,
+Unit: payload.unit,
+City: payload.city,
+SateId: payload.stateId,
+ZipCode: payload.zipCode
+}]]]></db:input-parameters>
+		</db:update>
+		<logger level="INFO" doc:name="END" doc:id="5f043028-862d-4805-811f-f722b488fde3" message="END put:\contacts\(id)\address\ - #[vars.correlationId]"/>
+    
+</flow>
+    <flow name="put:\contacts\(id)\communications\(communicationId):application\json:sys-ms3contacts-env-api-config">
+        <logger level="INFO" doc:name="START" doc:id="9597a0cc-6ddc-48f9-b4fa-f52d2fb1b29b" message="START put:\contacts\(id)\communications\ - #[payload] - #[vars.correlationId]"/>
+		<db:update doc:name="Communication Channel By Id" doc:id="efea0caa-29ce-4e97-bcb1-9893864bfd0d" config-ref="Database_Config">
+			<db:sql ><![CDATA[Update ContactCommunicationChannel
+Set TypeId = :TypeId
+    Value = :Value
+    PreferredFlg= :PreferredFlg
+where Id = :Id and ContactId = :ContactId]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	Id: attributes.uriParams.communicationId,
+	ContactId: attributes.uriParams.id,
+	TypeId: payload.typeId,
+	Value: payload.value,
+	PreferredFgl: payload.preferred
+}]]]></db:input-parameters>
+		</db:update>
+		<logger level="INFO" doc:name="END" doc:id="fa9b837d-b925-4250-a94d-d959a3fcfaa4" message="END put:\contacts\(id)\communications\ - #[vars.correlationId]"/>
+    
+</flow>
+	<flow name="put:\contacts\(id):application\json:sys-ms3contacts-env-api-config">
+        <logger level="INFO" doc:name="START" doc:id="e8afd75b-4bca-4cf9-b3ee-677e6a4b8cf1" message="START put:\contacts\(id) - #[payload] - #[vars.correlationId]"/>
+		<db:update doc:name="Update" doc:id="c2e624c6-6cdf-4b12-9ab2-051880d6db09" config-ref="Database_Config">
+			<db:sql ><![CDATA[Update Contact
+Set LastName= :LastName
+    FirstName= :FirstName
+    DOB= :DOB
+    Title= :Title
+Where Id = :Id]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	Id: attributes.uriParams.id,
+	LastName: payload.lastName,
+	FirstName: payload.firstName,
+	DOB: payload.DOB,
+	Title: payload.title
+}]]]></db:input-parameters>
+		</db:update>
+		<logger level="INFO" doc:name="END" doc:id="f5b9cb32-79ae-42f9-80fc-d088941056e5" message="END put:\contacts\(id) - #[vars.correlationId]"/>
+    
+</flow>
+	
+	
+	
+	</mule>

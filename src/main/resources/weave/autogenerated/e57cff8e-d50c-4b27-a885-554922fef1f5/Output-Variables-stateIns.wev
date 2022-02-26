@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_e57cff8e_d50c_4b27_a885_554922fef1f5_Output_Variables_stateIns = Array<Number>
+

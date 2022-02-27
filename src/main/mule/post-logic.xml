@@ -90,11 +90,6 @@ CorrelationId: vars.correlationId
 			<error-handler >
 				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="3217837a-0f6c-402e-be3e-f999fe3a7317" >
 					<logger level="INFO" doc:name="Logger" doc:id="c4184551-7c1d-43ac-aed0-7768df107bdb" message="ERROR trying to create a Contact - #[vars.correlationId]"/>
-					<db:execute-ddl doc:name="Rollback" doc:id="b6ba5412-73e2-4a49-a54b-4a799bf6baf0" config-ref="Database_Config">
-						<db:sql ><![CDATA[begin
-if @@TRANCOUNT > 0 rollback;
-end;]]></db:sql>
-					</db:execute-ddl>
 				</on-error-propagate>
 			</error-handler>
 		</try>

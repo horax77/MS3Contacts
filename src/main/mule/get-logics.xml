@@ -15,13 +15,14 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 output application/java
 ---
 "Select c.Id, c.LastName, c.FirstName, c.DOB, c.Title ,
-	   ca.Id AddressId, ca.typeId AddressTypeId, at.description AddressTypeDesc, ca.Street, ca.StreetNumber, ca.Unit, ca.City, ca.StateId, ZipCode,
+	   ca.Id AddressId, ca.typeId AddressTypeId, at.description AddressTypeDesc, ca.Street, ca.StreetNumber, ca.Unit, ca.City, ca.StateId, st.Description StateDesc, ZipCode,
 	   ccc.Id CommunicationChannelId, ccc.TypeId CommunicationTypeId, ccType.description CommunicationTypeDesc, ccc.value, ccc.preferredFlg
 From Contact c
 	left join ContactAdress ca on ca.ContactId = c.Id
 	  inner join AdressType at on at.id = ca.typeId
+	  inner join State st on st.id = ca.StateId
 	left join ContactCommunicationChannel ccc on ccc.ContactId = c.Id
-	  inner join CommunicationChannelType ccType on ccType.Id = ccc.TypeId "
+	  inner join CommunicationChannelType ccType on ccType.Id = ccc.TypeId  "
 ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
@@ -45,14 +46,11 @@ FETCH FIRST " ++ message.attributes.queryParams.limit ++ " ROWS ONLY"]]></ee:set
 		</db:select>
 		<ee:transform doc:name="Response" doc:id="30068038-a887-4001-a9ad-635a948ba29a" >
 			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-payload]]></ee:set-payload>
+				<ee:set-payload resource="resource/dwl/GetContactResponse.dwl" />
 			</ee:message>
 		</ee:transform>
 		<logger level="INFO" doc:name="END" doc:id="e633b898-6192-4389-9249-c4812f6abc26" message="END GET\Contacts - #[vars.correlationId]"/>
-	
+
 </flow>
 	<flow name="get:\contacts\(id):sys-ms3contacts-env-api-config" doc:id="b999ef85-99d7-4ded-bfab-b0333cff5462" >
 		<logger level="INFO" doc:name="START" doc:id="43d7966b-0aa3-4edf-b52e-09e2e30cb632" message="START GET\Contacts by ID :  #[attributes.uriParams.id]  - #[vars.correlationId]"/>
@@ -71,10 +69,7 @@ vars.vBaseQuery ++
 		</db:select>
 		<ee:transform doc:name="Response" doc:id="b05ef6f8-e637-41a6-ab37-cf0bc7ed8e8a" >
 			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-payload]]></ee:set-payload>
+				<ee:set-payload resource="resource/dwl/GetContactResponse.dwl" />
 			</ee:message>
 		</ee:transform>
 		<logger level="INFO" doc:name="END" doc:id="f6dbd926-0c5d-4408-b99c-3ee6851d3617" message="END GET\Contacts by ID - #[vars.correlationId]"/>

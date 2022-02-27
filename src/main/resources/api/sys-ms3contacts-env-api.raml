@@ -10,6 +10,7 @@ protocols:
 
 types:
   contact-type: !include types/contact-type.raml
+  contact-update-type: !include types/contact-update-type.raml
   contact-address-type: !include ../api/types/contact-address-type.raml
   contact-communication-type: !include ../api/types/contact-communication-type.raml
  
@@ -72,9 +73,9 @@ traits:
       description: Update a Contact by Id. Every object present (Information, Address, Contact) will overwrite only those fields are present.
       body:
         application/json:
-          type: contact-type
+          type: contact-update-type
           examples: 
-            output:  !include examples/contact-object-type-example.raml         
+            output: !include ../api/examples/contact-update-type-example.raml         
       responses:
         200:
 
@@ -126,6 +127,7 @@ traits:
           description: Delete a Contact address information by Id     
           responses:
             200:
+             
 
     /communications:
       displayName: Communications
@@ -167,6 +169,7 @@ traits:
           displayName: Delete a Communication Channel 
           description: Delete a Communication Channel by Id     
           responses:
-            200:          
+            200:
+                      
         
 

@@ -6,13 +6,18 @@ properties:
     description: User unique Key
     type: integer
     required: false
-    example: 1  
-  'type': 
+    example: 1 
+  'typeId': 
+    description: Id of type
+    type: integer
+    example: 1
+    required: false      
+  'typeDesc': 
     description: address type
     enum: [home, work, alternative]
     example: home
     required: false         
-  number:
+  streetNumber:
     type: string
     description: address number
     required: false
@@ -32,11 +37,16 @@ properties:
     type: string
     required: false
     example: 'Somewhere'
-  state:
+  stateId:
+    description: Id of State Value
+    type: integer
+    example: 1
+    required: false
+  stateDesc:
     description: address state
     type: string
     required: false
-    example: 'SW'
+    example: 'New York'
   zip:
     description: address zip code
     type: string

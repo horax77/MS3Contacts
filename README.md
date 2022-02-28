@@ -50,10 +50,10 @@ https://github.com/horax77/MS3Contacts
 https://www.getpostman.com/collections/261640e9ee7b395336b4
 ```
 ## Database DER
-![remittance chart](./docs/images/DER_Contacts.png "DER Contact Model")
+![remittance chart](docs/images/DER_Contacts.png "DER Contact Model")
 
 ## Create Contact Sequence Diagram
-![remittance chart](./docs/images/GetContactList-PostContact.drawio.png "Create Contacts Sequence Diagram")
+![remittance chart](docs/images/GetContactList-PostContact.drawio.png "Create Contacts Sequence Diagram")
 
 # 2 - app-dhub-supplier-purchase.xml
 

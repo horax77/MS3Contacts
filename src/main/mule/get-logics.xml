@@ -67,6 +67,7 @@ vars.vBaseQuery ++
 		<db:select doc:name="Contact By Id" doc:id="6c472830-81d6-400e-8678-5f570dd06ceb" config-ref="Database_Config">
 			<db:sql ><![CDATA[#[payload]]]></db:sql>
 		</db:select>
+		<flow-ref doc:name="NotFoundControl_SFlow" doc:id="47993e3c-017c-4f44-9f30-817d854db703" name="NotFoundControl_SFlow"/>
 		<ee:transform doc:name="Response" doc:id="b05ef6f8-e637-41a6-ab37-cf0bc7ed8e8a" >
 			<ee:message >
 				<ee:set-payload resource="resource/dwl/GetContactResponse.dwl" />

@@ -9,7 +9,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	
     <sub-flow name="NotFoundControl_SFlow" doc:id="8849ba58-802f-42da-acf9-b40850c00a64" >
 		<choice doc:name="Choice" doc:id="199e8c08-eeaf-4b82-bde2-da0e8667a151">
-			<when expression="#[payload == 0]">
+			<when expression="#[payload == 0 or payload.affectedRows == 0]">
 				<set-variable value="404" doc:name="httpStatus" doc:id="97a263b4-6af0-4ecc-b3c9-36d6fe9fbcc5" variableName="httpStatus" />
 				<raise-error doc:name="Not Found" doc:id="21767992-f9b2-4e62-9cfc-535b92926556" type="ERROR:NOT_FOUND" description="Resource Not Found" />
 			</when>

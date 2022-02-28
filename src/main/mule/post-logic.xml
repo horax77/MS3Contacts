@@ -6,9 +6,8 @@
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<sub-flow name="InsCommunication_SFlow" doc:id="ed90960e-9516-4da5-b0c1-01477056885e" >
-		<try doc:name="Try" doc:id="bbff693f-37c4-4aeb-bc14-bd79270a85a7" >
-			<db:bulk-insert doc:name="Contact Communications Channels" doc:id="2d561f95-69ff-4d18-b57c-8a7544fd1c08" config-ref="Database_Config" target="vCommunicationsIns">
-				<db:bulk-input-parameters><![CDATA[#[(payload.Communication default []) map {
+		<db:bulk-insert doc:name="Contact Communications Channels" doc:id="2d561f95-69ff-4d18-b57c-8a7544fd1c08" config-ref="Database_Config" target="vCommunicationsIns">
+				<db:bulk-input-parameters><![CDATA[#[(payload.communications default []) map {
   ContactId: (vars.vContactIns.generatedKeys['GENERATED_KEYS'] default attributes.uriParams.id),	
   TypeId: $.typeId,
   Value: $.value,
@@ -20,29 +19,9 @@ ContactId, TypeId, Value, PreferredFlg, CorrelationId)
 values (
 :ContactId, :TypeId, :Value, :PreferredFlg, :CorrelationId) ]]></db:sql>
 			</db:bulk-insert>
-			<error-handler >
-				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="e103b958-24b8-4f28-968d-c1bdccea6545" when="#[error.description contains p('communications.errorAllowed')]">
-					<logger level="INFO" doc:name="Logger" doc:id="d43b7536-1710-4c6f-8182-37952f0b8a0b" message="Some Communication Channels alredy existed - #[vars.correlationId]"/>
-				</on-error-continue>
-			</error-handler>
-		</try>
 	</sub-flow>
 	<sub-flow name="InsAddress_SFlow" doc:id="e57cff8e-d50c-4b27-a885-554922fef1f5" >
-		<try doc:name="Try" doc:id="7dc4c881-0fd2-45c1-acef-f729438dfc3e">
-				<db:bulk-insert doc:name="State" doc:id="c1ba89a8-0589-4f1b-b8d6-46e4c393666b" config-ref="Database_Config" target="stateIns">
-					<db:bulk-input-parameters><![CDATA[#[(payload.address.state default [])
-map {state: $, correlationId: vars.correlationId}]]]></db:bulk-input-parameters>
-					<db:sql><![CDATA[    INSERT into state (Description, CorrelationId)
-    VALUES (:state, :correlationId);]]></db:sql>
-				</db:bulk-insert>
-				<error-handler>
-					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="498a0ca0-31db-4ac5-9e0e-5024771394a1" when="#[error.description contains p('states.errorAllowed')]">
-						<logger level="INFO" doc:name="Logger" doc:id="05f5401b-8e3c-4d17-a318-9a4e3f85415e" message="Some States alredy existed - #[vars.correlationId]" />
-					</on-error-continue>
-				</error-handler>
-			</try>
-		<try doc:name="Try" doc:id="dfd53fc2-cae3-466e-8657-1dbd8bdf5c18" >
-			<db:bulk-insert doc:name="Contact Adresses" doc:id="44f8e843-b750-4471-a630-73e8421f745d" config-ref="Database_Config" target="vAdressIns">
+		<db:bulk-insert doc:name="Contact Adresses" doc:id="44f8e843-b750-4471-a630-73e8421f745d" config-ref="Database_Config" target="vAdressIns">
 				<db:bulk-input-parameters><![CDATA[#[(payload.address default []) map {
   ContactId: (vars.vContactIns.generatedKeys['GENERATED_KEYS'] default attributes.uriParams.id),	
   TypeId: $.typeId,
@@ -50,7 +29,7 @@ map {state: $, correlationId: vars.correlationId}]]]></db:bulk-input-parameters>
   StreetNumber: $.number,
   Unit: $.unit,
   City: $.city,
-  State: $.state,
+  StateId: $.stateId,
   ZipCode: $.zipCode,
   CorrelationId: vars.correlationId	
 }]]]></db:bulk-input-parameters>
@@ -58,30 +37,23 @@ map {state: $, correlationId: vars.correlationId}]]]></db:bulk-input-parameters>
 ContactId, TypeId, Street, StreetNumber, Unit, City, StateId,ZipCode, CorrelationId)
 values (
 :ContactId, :TypeId, :Street, :StreetNumber, :Unit, :City,
-(select id from state where description=:State) , 
- :ZipCode, :CorrelationId
+:StateId ,  :ZipCode, :CorrelationId
 )]]></db:sql>
 			</db:bulk-insert>
-			<error-handler >
-				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="01e3ab62-9944-400e-877a-37197c6fdfe0" when="#[error.description contains p('address.errorAllowed')]">
-					<logger level="INFO" doc:name="Logger" doc:id="93c2384c-b42b-4500-80a2-14f8eb27d0f6" message="Some States alredy existed - #[vars.correlationId]"/>
-				</on-error-continue>
-			</error-handler>
-		</try>
-		<logger level="INFO" doc:name="Logger" doc:id="d11907b9-12a7-4a9b-9471-94c929b5b43b" />
 	</sub-flow>
 	<flow name="post:\contacts:application\json:sys-ms3contacts-env-api-config" doc:id="5f187dfc-7150-420e-8db1-68914d0985d7" >
 		<logger level="INFO" doc:name="START" doc:id="2e122f5a-1d6a-4838-9112-96df9ca1d988" message="START POST Contacts - #[payload] - #[vars.correlationId]"/>
 		<try doc:name="Try" doc:id="e4b51c5c-9cfc-4204-8c0e-bf742f7c07c6" transactionalAction="ALWAYS_BEGIN">
 			<db:insert doc:name="Contact Identification" doc:id="ed49cbd7-cd25-4472-aeca-9af8c1f4fbb0" config-ref="Database_Config" target="vContactIns" autoGenerateKeys="true">
-			<db:sql><![CDATA[insert into Contact (LastName, FirstName, DOB, Title, CorrelationId)
+			<db:sql><![CDATA[insert into Contact (LastName, FirstName, DOB, Title, Gender, CorrelationId)
 values 
-(:LastName, :FirstName, :DOB, :Title, :CorrelationId)]]></db:sql>
+(:LastName, :FirstName, :DOB, :Title,:Gender, :CorrelationId)]]></db:sql>
 			<db:input-parameters><![CDATA[#[{
 LastName: payload.identification.lastName, 
 FirstName: payload.identification.firstName,
 DOB: payload.identification.DOB,
 Title: payload.identification.title,
+Gender: payload.identification.gender,
 CorrelationId: vars.correlationId
 }]]]></db:input-parameters>
 		</db:insert>
@@ -99,7 +71,7 @@ CorrelationId: vars.correlationId
 output application/json
 ---
 {
-	id: (vars.vContactIns.generatedKeys['GENERATED_KEYS'] default attribute.uriParams.id)
+	id: (vars.vContactIns.generatedKeys['GENERATED_KEYS'] default attributes.uriParams.id)
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
@@ -107,7 +79,14 @@ output application/json
 	</flow>
 	<flow name="post:\contacts\(id)\address:application\json:sys-ms3contacts-env-api-config" doc:id="b6f447fd-211b-4c91-adeb-0f46b3fbc87c" >
 		<logger level="INFO" doc:name="START" doc:id="8222d0a1-2c6c-4493-8a55-d2dd50adc950" message="START POST Address - #[payload] - #[vars.correlationId]"/>
-		<flow-ref doc:name="InsAddress_SFlow" doc:id="127dbb53-ea51-454d-9cda-eafabcf8de2e" name="InsAddress_SFlow"/>
+		<try doc:name="Try" doc:id="dfd53fc2-cae3-466e-8657-1dbd8bdf5c18" transactionalAction="ALWAYS_BEGIN">
+			<flow-ref doc:name="InsAddress_SFlow" doc:id="127dbb53-ea51-454d-9cda-eafabcf8de2e" name="InsAddress_SFlow" />
+			<error-handler>
+				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="ed37e288-aaa2-4e09-aa0b-b0363687e219" >
+					<logger level="INFO" doc:name="Logger" doc:id="93c2384c-b42b-4500-80a2-14f8eb27d0f6" message="Error trying to insert Addresses - #[vars.correlationId]" />
+				</on-error-propagate>
+			</error-handler>
+		</try>
 		<ee:transform doc:name="Response" doc:id="338baf4b-cccb-4895-9bde-a609bfd4052b" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
@@ -121,7 +100,14 @@ output application/json
 	</flow>
 	<flow name="post:\contacts\(id)\communications:application\json:sys-ms3contacts-env-api-config" doc:id="299ce366-4557-4b9f-bb3f-918bdd066031" >
 		<logger level="INFO" doc:name="START" doc:id="ed30b7d9-03ce-49cb-94b2-738e6ac98e78" message="START POST Communications - #[payload] - #[vars.correlationId]"/>
-		<flow-ref doc:name="InsCommunication_SFlow" doc:id="df08ba33-0ad7-4cca-afa8-d7bd163b9d0d" name="InsCommunication_SFlow"/>
+		<try doc:name="Try" doc:id="11d64cb4-fded-4e9a-b256-3f4efdfe9c09" transactionalAction="ALWAYS_BEGIN">
+			<flow-ref doc:name="InsCommunication_SFlow" doc:id="df08ba33-0ad7-4cca-afa8-d7bd163b9d0d" name="InsCommunication_SFlow" />
+			<error-handler >
+				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f0daf514-ee7d-43b2-8122-c864b2421255" >
+					<logger level="INFO" doc:name="Logger" doc:id="d43b7536-1710-4c6f-8182-37952f0b8a0b" message="Error Trying to insert Communications - #[vars.correlationId]" />
+				</on-error-propagate>
+			</error-handler>
+		</try>
 		<ee:transform doc:name="Response" doc:id="2f07bd7d-bee1-4d12-99f3-f8da8442d8b3" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0

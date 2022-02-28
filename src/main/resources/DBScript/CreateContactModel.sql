@@ -36,7 +36,7 @@ insert into state (id, description) values (3,'Arizona');
 insert into state (id, description) values (4,'Arkansas');
 insert into state (id, description) values (5,'California');
 insert into state (id, description) values (6,'North Carolina');
-insert into state (id, description) values (7,'South Carolina ');
+insert into state (id, description) values (7,'South Carolina');
 insert into state (id, description) values (8,'Colorado');
 insert into state (id, description) values (9,'Connecticut');
 insert into state (id, description) values (10,'North Dakota');
@@ -55,7 +55,7 @@ insert into state (id, description) values (22,'Luisiana');
 insert into state (id, description) values (23,'Maine');
 insert into state (id, description) values (24,'Maryland');
 insert into state (id, description) values (25,'Massachusetts');
-insert into state (id, description) values (26,'Míchigan');
+insert into state (id, description) values (26,'Michigan');
 insert into state (id, description) values (27,'Minnesota');
 insert into state (id, description) values (28,'Misisipi');
 insert into state (id, description) values (29,'Misuri');
@@ -64,12 +64,11 @@ insert into state (id, description) values (31,'Nebraska');
 insert into state (id, description) values (32,'Nevada');
 insert into state (id, description) values (33,'New Jersey');
 insert into state (id, description) values (34,'New York');
-insert into state (id, description) values (35,'New Hampshire');​
-insert into state (id, description) values (36,'New México');
 insert into state (id, description) values (37,'Ohio');
 insert into state (id, description) values (38,'Oklahoma');
-insert into state (id, description) values (39,'Oregón');
+insert into state (id, description) values (39,'Oregon');
 insert into state (id, description) values (40,'Pensilvania');
+
 insert into state (id, description) values (41,'Rhode Island');
 insert into state (id, description) values (42,'Tennessee');
 insert into state (id, description) values (43,'Texas');
@@ -80,7 +79,6 @@ insert into state (id, description) values (47,'West Virginia');
 insert into state (id, description) values (48,'Washington');
 insert into state (id, description) values (49,'Wisconsin');
 insert into state (id, description) values (50,'Wyoming');
-
 
 create table ContactAdress (
 	Id int NOT NULL IDENTITY(1,1) primary key ,

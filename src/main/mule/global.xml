@@ -11,7 +11,7 @@ http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/
 http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
 	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="08b3fa68-75de-42e8-81b5-59fc31601fd9" file="securedProperties-${env}.yaml" key="${muleKey}" />
 	<db:config name="Database_Config" doc:name="Database Config" doc:id="aa781937-7929-4324-baa0-bd1e3309138b" >
-		<db:mssql-connection host="${secure::db.host}" port="${secure::db.port}" user="${secure::db.user}" password="${secure::db.pass}" databaseName="Contacts" />
+		<db:mssql-connection host="${secure::db.host}" port="${secure::db.port}" user="${secure::db.user}" password="${secure::db.pass}" databaseName="${secure::db.name}" />
 	</db:config>
 	<configuration-properties doc:name="Configuration properties" doc:id="7903fc9a-11f8-4928-a554-2d005ecd6d27" file="nonSecureProperties-global.yaml" />
 
@@ -24,8 +24,9 @@ http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/m
 		<tls:key-store type="jks" keyPassword="${secure::keystore.password}" password="${secure::keystore.password}" path="keystore.jks"/>
 	</tls:context>
     <apikit:config name="sys-ms3contacts-env-api-config" api="sys-ms3contacts-env-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-	<configuration doc:name="Configuration" doc:id="2c4e8b3f-6624-4b7c-8c59-58561d29043d" defaultErrorHandler-ref="global-error-handlerError_Handler" />	
-    <sub-flow name="NotFoundControl_SFlow" doc:id="ad5bb9e1-0a8a-40a9-b387-73233c593385" >
+	<configuration doc:name="Configuration" doc:id="2c4e8b3f-6624-4b7c-8c59-58561d29043d" defaultErrorHandler-ref="global-error-handlerError_Handler" />
+	<global-property doc:name="Global Property" doc:id="9c993e69-9756-4487-bd77-17269b44a27c" name="muleKey" value="!muleKeyMS3!!!!!" />
+	<sub-flow name="NotFoundControl_SFlow" doc:id="ad5bb9e1-0a8a-40a9-b387-73233c593385" >
 		<choice doc:name="Choice" doc:id="f3a0d84e-56e0-4b34-b988-e70c8787b090">
 			<when expression="#[payload == 0 or payload.affectedRows == 0 or sizeOf(payload) == 0]">
 				<set-variable value="404" doc:name="httpStatus" doc:id="06bde9a9-3f18-494c-b929-7160f18a929d" variableName="httpStatus" />

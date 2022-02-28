@@ -48,7 +48,7 @@ output application/json
 		<logger level="INFO" doc:name="END" doc:id="af91c29d-7edd-4477-826d-261f59f61cb0" message="START delete:\contacts\(id)\communications\(communicationId) - Id: #[attributes.uriParams.id] - communicationId: #[attributes.uriParams.communicationId] - #[vars.correlationId]"/>
     
 </flow>
-    <flow name="delete:\contacts\(id):sys-ms3contacts-env-api-config">
+    <flow name="delete:\contacts\(id):sys-ms3contacts-env-api-config" doc:id="c7ff599b-8e7e-4dc8-89f4-94f122721525">
         <logger level="INFO" doc:name="START" doc:id="43e59e49-267a-4fc4-9537-03271ce77b52" message="START delete:\contacts\(id) - Id: #[attributes.uriParams.id] - #[vars.correlationId]"/>
 		<set-variable value="#[attributes.uriParams.id]" doc:name="Set conctactId" doc:id="c087c2b6-724b-43b0-a6cb-527756c37510" variableName="contactId"/>
 		<try doc:name="Try" doc:id="152ae3ba-b9a4-4873-9253-19a859562d8b" transactionalAction="ALWAYS_BEGIN">

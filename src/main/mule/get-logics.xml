@@ -14,7 +14,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 				<ee:set-variable variableName="vBaseQuery" ><![CDATA[%dw 2.0
 output application/java
 ---
-"Select c.Id, c.LastName, c.FirstName, c.DOB, c.Title ,
+"Select c.Id, c.LastName, c.FirstName, c.DOB, c.Gender, c.Title ,
 	   ca.Id AddressId, ca.typeId AddressTypeId, at.description AddressTypeDesc, ca.Street, ca.StreetNumber, ca.Unit, ca.City, ca.StateId, st.Description StateDesc, ZipCode,
 	   ccc.Id CommunicationChannelId, ccc.TypeId CommunicationTypeId, ccType.description CommunicationTypeDesc, ccc.value, ccc.preferredFlg
 From Contact c
@@ -36,15 +36,15 @@ From Contact c
 output application/java
 ---
 vars.vBaseQuery ++ 
-"order by " ++ message.attributes.queryParams.orderBy ++ " " ++ message.attributes.queryParams.order ++ "
-OFFSET " ++ message.attributes.queryParams.offset  ++ " ROWS
-FETCH FIRST " ++ message.attributes.queryParams.limit ++ " ROWS ONLY"]]></ee:set-payload>
+"order by " ++ attributes.queryParams.orderBy ++ " " ++ attributes.queryParams.order ++ "
+OFFSET " ++ attributes.queryParams.offset  ++ " ROWS
+FETCH FIRST " ++ attributes.queryParams.limit ++ " ROWS ONLY"]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 		<db:select doc:name="Contacts List" doc:id="2afe9c52-efce-416b-a5ff-16910ca22d9d" config-ref="Database_Config">
 			<db:sql ><![CDATA[#[payload]]]></db:sql>
 		</db:select>
-		<ee:transform doc:name="Response" doc:id="30068038-a887-4001-a9ad-635a948ba29a" >
+		<ee:transform doc:name="Standart Response" doc:id="30068038-a887-4001-a9ad-635a948ba29a" >
 			<ee:message >
 				<ee:set-payload resource="resource/dwl/GetContactResponse.dwl" />
 			</ee:message>
@@ -68,9 +68,17 @@ vars.vBaseQuery ++
 			<db:sql ><![CDATA[#[payload]]]></db:sql>
 		</db:select>
 		<flow-ref doc:name="NotFoundControl_SFlow" doc:id="47993e3c-017c-4f44-9f30-817d854db703" name="NotFoundControl_SFlow"/>
-		<ee:transform doc:name="Response" doc:id="b05ef6f8-e637-41a6-ab37-cf0bc7ed8e8a" >
+		<ee:transform doc:name="Startdar Response" doc:id="b05ef6f8-e637-41a6-ab37-cf0bc7ed8e8a" >
 			<ee:message >
 				<ee:set-payload resource="resource/dwl/GetContactResponse.dwl" />
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="Set Response to Object" doc:id="c666a6fc-59e5-45eb-a46a-660e6e547f22" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload reduce ($ ++ $$)]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 		<logger level="INFO" doc:name="END" doc:id="f6dbd926-0c5d-4408-b99c-3ee6851d3617" message="END GET\Contacts by ID - #[vars.correlationId]"/>

@@ -1,9 +1,3 @@
-﻿
---select * from contact
---select * from State
---select * from ContactAdress where contactId=11
---select * from ContactCommunicationChannel where contactId=6
-
 drop table ContactAdress;
 drop table ContactCommunicationChannel;
 drop table CommunicationChannelType;

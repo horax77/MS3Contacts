@@ -5,6 +5,6 @@ db:
   port: "1433"
   user: "admin"
   pass: "![4qPt/FCb9n0JfekAOaGe6Q==]"
-  name: "Contacts"
-      
+  name: "ContactTest"
+
 keystore.password: "![4+UKp0+4NjvxSx0QBVF3pA==]"

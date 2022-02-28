@@ -43,6 +43,7 @@ values (
 	</sub-flow>
 	<flow name="post:\contacts:application\json:sys-ms3contacts-env-api-config" doc:id="5f187dfc-7150-420e-8db1-68914d0985d7" >
 		<logger level="INFO" doc:name="START" doc:id="2e122f5a-1d6a-4838-9112-96df9ca1d988" message="START POST Contacts - #[payload] - #[vars.correlationId]"/>
+		<flow-ref doc:name="identificationControl_SFlow" doc:id="c3de99df-ff34-4dc7-a878-f489ad6e0dac" name="identificationControl_SFlow"/>
 		<try doc:name="Try" doc:id="e4b51c5c-9cfc-4204-8c0e-bf742f7c07c6" transactionalAction="ALWAYS_BEGIN">
 			<db:insert doc:name="Contact Identification" doc:id="ed49cbd7-cd25-4472-aeca-9af8c1f4fbb0" config-ref="Database_Config" target="vContactIns" autoGenerateKeys="true">
 			<db:sql><![CDATA[insert into Contact (LastName, FirstName, DOB, Title, Gender, CorrelationId)
@@ -79,6 +80,7 @@ output application/json
 	</flow>
 	<flow name="post:\contacts\(id)\address:application\json:sys-ms3contacts-env-api-config" doc:id="b6f447fd-211b-4c91-adeb-0f46b3fbc87c" >
 		<logger level="INFO" doc:name="START" doc:id="8222d0a1-2c6c-4493-8a55-d2dd50adc950" message="START POST Address - #[payload] - #[vars.correlationId]"/>
+		<flow-ref doc:name="addressControl_SFlow" doc:id="4bc0c573-1162-4b55-aa6a-cbf60478d9b0" name="addressControl_SFlow"/>
 		<try doc:name="Try" doc:id="dfd53fc2-cae3-466e-8657-1dbd8bdf5c18" transactionalAction="ALWAYS_BEGIN">
 			<flow-ref doc:name="InsAddress_SFlow" doc:id="127dbb53-ea51-454d-9cda-eafabcf8de2e" name="InsAddress_SFlow" />
 			<error-handler>
@@ -100,6 +102,7 @@ output application/json
 	</flow>
 	<flow name="post:\contacts\(id)\communications:application\json:sys-ms3contacts-env-api-config" doc:id="299ce366-4557-4b9f-bb3f-918bdd066031" >
 		<logger level="INFO" doc:name="START" doc:id="ed30b7d9-03ce-49cb-94b2-738e6ac98e78" message="START POST Communications - #[payload] - #[vars.correlationId]"/>
+		<flow-ref doc:name="communicationControl_SFlow" doc:id="cd9093ab-0b1c-4432-82b0-18392199fa75" name="communicationControl_SFlow"/>
 		<try doc:name="Try" doc:id="11d64cb4-fded-4e9a-b256-3f4efdfe9c09" transactionalAction="ALWAYS_BEGIN">
 			<flow-ref doc:name="InsCommunication_SFlow" doc:id="df08ba33-0ad7-4cca-afa8-d7bd163b9d0d" name="InsCommunication_SFlow" />
 			<error-handler >

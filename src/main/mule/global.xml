@@ -34,5 +34,29 @@ http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/m
 			</when>
 		</choice>
 	</sub-flow>
+	<sub-flow name="communicationControl_SFlow" doc:id="f671bdfb-6f88-49ac-8b21-6f21e938a575" >
+		<choice doc:name="Choice" doc:id="574d1e7b-1f27-446d-805f-2100d46c7ff3" >
+			<when expression="#[sizeOf(payload.communications default '')== 0]">
+				<set-variable value="400" doc:name="httpStatus" doc:id="a57bee00-a9c2-49ae-82d6-adc1f41a3b82" variableName="httpStatus"/>
+				<raise-error doc:name="Raise error" doc:id="47724092-b3ef-4cc6-80f6-38a85da626da" type="ERROR:COMMUNICATION_BAD_REQUEST" description="Communication cannot be empty"/>
+			</when>
+		</choice>
+	</sub-flow>
+	<sub-flow name="addressControl_SFlow" doc:id="cf1d4b2c-7ff5-4c8d-ab9c-b9e866c56777" >
+		<choice doc:name="Choice" doc:id="13182659-82d9-483a-9720-a88f573fecf4" >
+			<when expression="#[sizeOf(payload.address default '') == 0]">
+				<set-variable value="400" doc:name="httpStatus" doc:id="3fce1d9b-e868-4abe-9552-0fb72d35242b" variableName="httpStatus"/>
+				<raise-error doc:name="Raise error" doc:id="d39b02b4-8b9b-4926-9f21-0dffbee6faed" type="ERROR:ADDRESS_BAD_REQUEST" description="Address cannot be empty"/>
+			</when>
+		</choice>
+	</sub-flow>
+	<sub-flow name="identificationControl_SFlow" doc:id="470f1ba7-77f7-44c9-9e8c-1a3630877dd9" >
+		<choice doc:name="Choice" doc:id="f318dfda-2795-4966-80af-c66122c5a51f" >
+			<when expression="#[isEmpty(payload.identification)]">
+				<set-variable value="400" doc:name="Set Variable" doc:id="cd76083a-729e-4298-9ff6-c27bc64048de" variableName="httpStatus"/>
+				<raise-error doc:name="Raise error" doc:id="97b69cf5-8246-447e-a024-98c9565e5a50" type="ERROR:CONTACT_BAD_REQUEST" description="Identification cannot be empty"/>
+			</when>
+		</choice>
+	</sub-flow>
 	
 </mule>

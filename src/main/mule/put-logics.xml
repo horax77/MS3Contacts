@@ -9,7 +9,8 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	
     <flow name="put:\contacts\(id)\address\(addressId):application\json:sys-ms3contacts-env-api-config">
         <logger level="INFO" doc:name="START" doc:id="1f29b7f3-2a50-4192-bf2a-b3c0a7e34f47" message="START put:\contacts\(id)\address\ - #[payload] - #[vars.correlationId]"/>
-        <db:update doc:name="Address By Id" doc:id="7d2cbc48-ee9c-4449-b210-33e95074bbe2" config-ref="Database_Config">
+        <flow-ref doc:name="addressControl_SFlow" doc:id="d98668a9-6998-4229-b024-6cda89c4b3b8" name="addressControl_SFlow"/>
+		<db:update doc:name="Address By Id" doc:id="7d2cbc48-ee9c-4449-b210-33e95074bbe2" config-ref="Database_Config">
 			<db:sql ><![CDATA[Update ContactAdress
 Set TypeId = ISNULL(:TypeId, TypeId),
     Street = ISNULL(:Street, Street),
@@ -47,6 +48,7 @@ output application/json
 </flow>
     <flow name="put:\contacts\(id)\communications\(communicationId):application\json:sys-ms3contacts-env-api-config">
         <logger level="INFO" doc:name="START" doc:id="9597a0cc-6ddc-48f9-b4fa-f52d2fb1b29b" message="START put:\contacts\(id)\communications\ - #[payload] - #[vars.correlationId]"/>
+		<flow-ref doc:name="communicationControl_SFlow" doc:id="561b4fc0-6e50-4eba-a0d8-809867344b62" name="communicationControl_SFlow"/>
 		<db:update doc:name="Communication Channel By Id" doc:id="efea0caa-29ce-4e97-bcb1-9893864bfd0d" config-ref="Database_Config">
 			<db:sql ><![CDATA[Update ContactCommunicationChannel
 Set TypeId = ISNULL(:TypeId,TypeId),
@@ -76,7 +78,8 @@ output application/json
 </flow>
 	<flow name="put:\contacts\(id):application\json:sys-ms3contacts-env-api-config">
         <logger level="INFO" doc:name="START" doc:id="e8afd75b-4bca-4cf9-b3ee-677e6a4b8cf1" message="START put:\contacts\(id) - #[payload] - #[vars.correlationId]"/>
-		<db:update doc:name="Update" doc:id="c2e624c6-6cdf-4b12-9ab2-051880d6db09" config-ref="Database_Config">
+		<flow-ref doc:name="identificationControl_SFlow" doc:id="41271e5b-231c-4f48-9063-2fbfaf110081" name="identificationControl_SFlow"/>
+		<db:update doc:name="Contact" doc:id="c2e624c6-6cdf-4b12-9ab2-051880d6db09" config-ref="Database_Config">
 			<db:sql ><![CDATA[Update Contact
 Set LastName= ISNULL(:LastName,LastName),
     FirstName= ISNULL(:FirstName,FirstName),

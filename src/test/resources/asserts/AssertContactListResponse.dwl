@@ -9,7 +9,7 @@ payload must equalTo(
       "FirstName": "Horacio",
       "LastName": "Espasandin",
       "DOB": "1977-01-08T00:00:00",
-      "Gender": 'M',
+      "Gender": "M",
       "Title": "Mule Developer"
     },
     "Addess": [

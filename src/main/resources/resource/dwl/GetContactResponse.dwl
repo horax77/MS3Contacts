@@ -12,7 +12,8 @@ payload groupBy (
         "Gender": value[0].Gender,
         "Title": value[0].Title
     },
-    "Addess": value distinctBy ($.AddressId) map {
+    "Addess": if ((value distinctBy ($.AddressId)).AddressId == [null] ) ([]) else
+    	value distinctBy ($.AddressId) map {
     	"Id": $.AddressId,
     	"TypeId": $.AddressTypeId,
         "TypeDesc": $.AddressTypeDesc,
@@ -24,7 +25,8 @@ payload groupBy (
         "StateDesc": $.StateDesc,
 		"Zipcode": $.ZipCode
     },
-    "Communications": value distinctBy ($.CommunicationChannelId) map {
+    "Communications": if ((value distinctBy ($.CommunicationChannelId)).CommunicationChannelId == [null] ) ([]) else
+    	value distinctBy ($.CommunicationChannelId) map {
     	"Id": $.CommunicationChannelId,
 		"TypeId": $.CommunicationTypeId,
         "TypeDesc": $.CommunicationTypeDesc,

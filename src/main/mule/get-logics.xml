@@ -19,10 +19,10 @@ output application/java
 	   ccc.Id CommunicationChannelId, ccc.TypeId CommunicationTypeId, ccType.description CommunicationTypeDesc, ccc.value, ccc.preferredFlg
 From Contact c
 	left join ContactAdress ca on ca.ContactId = c.Id
-	  inner join AdressType at on at.id = ca.typeId
-	  inner join State st on st.id = ca.StateId
+	  left join AdressType at on at.id = ca.typeId
+	  left join State st on st.id = ca.StateId
 	left join ContactCommunicationChannel ccc on ccc.ContactId = c.Id
-	  inner join CommunicationChannelType ccType on ccType.Id = ccc.TypeId  "
+	  left join CommunicationChannelType ccType on ccType.Id = ccc.TypeId  "
 ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
@@ -76,7 +76,7 @@ vars.vBaseQuery ++
 		<ee:transform doc:name="Set Response to Object" doc:id="c666a6fc-59e5-45eb-a46a-660e6e547f22" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
-output application/java
+output application/json
 ---
 payload reduce ($ ++ $$)]]></ee:set-payload>
 			</ee:message>

@@ -42,7 +42,7 @@ To generate the jar file
 mvn clean install -Denv=test
 ```
 
-## GitHun Repository
+## GitHub Repository
 ```
 https://github.com/horax77/MS3Contacts
 ```

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<munit:config name="get-logics-test-suite.xml" />
+	<munit:before-suite name="get-logics-test-suiteBefore_Suite" doc:id="9b32ad5e-72a6-4ceb-81b1-93a0592c47ba" >
+		<db:execute-script doc:name="Create Test DB" doc:id="30f2d6dd-f729-4d4e-83f4-bcc0b1f7d59d" config-ref="Database_Config" file="DBScript/CreateContactModel.sql"/>
+		<db:execute-script doc:name="Insert Sample Records" doc:id="04dd30e1-a6a8-454f-9895-59be26b14ef8" config-ref="Database_Config">
+				<db:sql><![CDATA[insert into contact (FirstName, LastName,  Gender, DOB, Title, CorrelationId)
+values 
+('Horacio','Espasandin','M','1977/01/08','Mule Developer','123');
+
+declare @Id int
+SELECT @Id = @@IDENTITY  
+
+insert into contactAdress (
+ContactId, TypeId, Street, StreetNumber, Unit, City, StateId,ZipCode, CorrelationId)
+values 
+(@Id,1,'Av. Rivadavia','8861','','Ciudad de Buenos Aires',1,'1407','123');
+
+insert into ContactCommunicationChannel (
+ContactId, TypeId, Value, PreferredFlg, CorrelationId) 
+values
+(@Id,1,'horax77@gmail.com','1','123');
+]]></db:sql>
+			</db:execute-script>
+	</munit:before-suite>
+	<munit:test name="get-logics-test-suite-get:\contacts:sys-ms3contacts-env-api-configTest" doc:id="6e70d5d9-3a6f-4ea7-bb54-2d1a45cb9b21" description="Test">
+		<munit:behavior>
+			<munit:set-event doc:name="queryParams" doc:id="3f996173-80ac-4c77-8544-8cd0539126de">
+				<munit:attributes value='#[ { "queryParams": {"orderBy": "LastName", "order":"asc", "offset":0, "limit":100}}]' />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\contacts:sys-ms3contacts-env-api-config" doc:id="1254fe8b-a178-48d8-ac68-8c76ac8ce54d" name="get:\contacts:sys-ms3contacts-env-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert expression" doc:id="eaf6f0cf-6bf7-46b7-9b51-8e9138b56351" >
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import asserts::AssertContactListResponse
+---
+AssertContactListResponse::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get-logics-test-suite-get:\contacts\(id):sys-ms3contacts-env-api-configTest" doc:id="2c8aef87-989c-475a-867f-87c7bbad2c89" description="Test">
+		<munit:behavior >
+			<munit:set-event doc:name="uriParams Id" doc:id="b582a7b7-a9a2-4d16-bdbe-b82756b2a3c4" >
+				<munit:attributes value='#[ { "uriParams": {"id": 1}}]' />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\contacts\(id):sys-ms3contacts-env-api-config" doc:id="9746b71b-cf20-4030-86f3-4da64576bcc1" name="get:\contacts\(id):sys-ms3contacts-env-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert expression" doc:id="eab3f774-a13f-49b4-95ce-c229e2119107" >
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import asserts::AssertContactResponse
+---
+AssertContactResponse::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+
+	
+
+	<munit:test name="post-logic-test-suite-post:\contacts:application\json:sys-ms3contacts-env-api-configTest" doc:id="404fa2c5-c04b-43a5-9cb8-0a9c0a229612" description="Test">
+		<munit:behavior >
+			<munit:set-event doc:name="Set Event" doc:id="2f14577f-1775-40cd-a370-12b277c010be" >
+				<munit:payload value='#[{&#10;	"identification": {&#10;		"firstName": "Bob2",&#10;		"lastName": "Frederick",&#10;		"DOB": "1981-06-21",&#10;		"gender": "M",&#10;		"title": "Manager"&#10;	},&#10;	"address": [{&#10;		"typeId": 1,&#10;		"number": 1234,&#10;		"street": "blah blah St",&#10;		"unit": "1 a",&#10;		"city": "Somewhere",&#10;        "stateId": 1,&#10;		"stateDesc": "CABA",&#10;		"zipCode": "12345"&#10;	}&#10;    ],&#10;	"communications": [{&#10;			"typeId": 1,&#10;			"value": "bfe@sample.com",&#10;	  		"preferred" : true&#10;		}	]&#10;}]' />
+				<munit:variables >
+					<munit:variable key="correlationId" value="'123'" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to post:\contacts:application\json:sys-ms3contacts-env-api-config" doc:id="59cba37e-1fbd-48c2-93d2-1248f1b4e53a" name="post:\contacts:application\json:sys-ms3contacts-env-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<db:select doc:name="Select" doc:id="6347892c-c504-4a48-b079-67cf7c106af1" config-ref="Database_Config">
+				<db:sql ><![CDATA[select count(*) cnt
+from contact c
+	inner join ContactAdress ca on ca.contactid = c.id
+	inner join ContactCommunicationChannel cc on cc.contactid = c.id 
+where FirstName = 'Bob2']]></db:sql>
+			</db:select>
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="2949bb68-c1b6-41f5-96bf-a8d49645d0ad" actual="#[payload.cnt[0]]" expected="#[1]" message="Ok"/>
+			<db:delete doc:name="Inserted Records" doc:id="3d3fce84-413c-42cc-a651-70a5f975dca4" config-ref="Database_Config">
+				<db:sql ><![CDATA[delete from contactAdress where contactId<>1;
+delete from ContactCommunicationChannel  where contactId<>1;
+delete from contact  where id<>1;]]></db:sql>
+			</db:delete>
+		</munit:validation>
+	
+</munit:test>
+
+	<munit:test name="put-logics-test-suite-put:\contacts\(id):application\json:sys-ms3contacts-env-api-configTest" doc:id="5f46e3c1-9e09-47ce-afd3-32ae87be8650" description="Test">
+		<munit:behavior >
+			<db:execute-script doc:name="Execute script" doc:id="c468e14a-1c26-4a34-a1a5-4727200e542c" config-ref="Database_Config">
+				<db:sql ><![CDATA[
+insert into contact (FirstName, LastName,  Gender, DOB, Title, CorrelationId)
+values 
+('Record','To Update','M','1977/01/08','Mule Developer','123');]]></db:sql>
+			</db:execute-script>
+			<db:select doc:name="Select" doc:id="ee13040c-9bb1-4af2-b735-d4e370aad95d" config-ref="Database_Config" target="vId">
+				<db:sql ><![CDATA[select id from contact
+where FirstName='Record' and LastName='To Update']]></db:sql>
+			</db:select>
+			<munit:set-event doc:name="Set Event" doc:id="f1e03998-4344-495e-81b7-45de4d10204c" >
+				<munit:payload value='#[{&#10;	"identification": {&#10;		"firstName": "Bob",&#10;		"lastName": "Espasandin",        &#10;		"DOB": "1981-06-21",&#10;		"gender": "M",&#10;		"title": "Manager"&#10;}}]' />
+				<munit:attributes value='#[ { "uriParams": {"id": vars.vId[0].id}}]' />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to put:\contacts\(id):application\json:sys-ms3contacts-env-api-config" doc:id="3a7f46fa-7eec-45b3-b9db-7c489d6f724a" name="put:\contacts\(id):application\json:sys-ms3contacts-env-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<db:select doc:name="Select" doc:id="377195e0-8661-4905-b451-7e2d6fac82b3" config-ref="Database_Config">
+				<db:sql ><![CDATA[select count(*) cnt
+from Contact
+where firstName = 'Bob' and lastName = 'Espasandin']]></db:sql>
+			</db:select>
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="d7d280c8-8f5f-45b0-a1b2-f24c4ace3fd7" actual="#[payload.cnt[0]]" expected="#[1]"/>
+			<db:execute-script doc:name="Execute script" doc:id="6fcf65f6-f758-4f55-a5ad-62bbadfb6372" config-ref="Database_Config">
+				<db:sql ><![CDATA[delete from contact where Id<>1;]]></db:sql>
+			</db:execute-script>
+		</munit:validation>
+	
+</munit:test>
+	<munit:test name="delete-logics-test-suite-delete:\contacts\(id):sys-ms3contacts-env-api-configTest" doc:id="d78fc945-660a-4e4d-98bd-a93e19fcb862" description="Test">
+		<munit:behavior>
+			<db:execute-script doc:name="Insert record to delete" doc:id="1a655496-061f-412f-94a7-c0db2b74c561" config-ref="Database_Config">
+				<db:sql ><![CDATA[
+insert into contact (FirstName, LastName,  Gender, DOB, Title, CorrelationId)
+values 
+('Record','To Delete','M','1977/01/08','Mule Developer','123');]]></db:sql>
+			</db:execute-script>
+			<db:select doc:name="Recover id" doc:id="3fe9082a-13a2-4ce7-8e33-6b8dfe7ba26e" config-ref="Database_Config" target="vId">
+				<db:sql ><![CDATA[select id from contact
+where FirstName='Record' and LastName='To Delete']]></db:sql>
+			</db:select>
+			<munit:set-event doc:name="Set Event" doc:id="000cf4ff-d7a5-42c9-83ed-83d66be98df4">
+				<munit:attributes value='#[ { "uriParams": {"id": vars.vId[0].id}}]' />
+
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution>
+			<flow-ref doc:name="Flow-ref to delete:\contacts\(id):sys-ms3contacts-env-api-config" doc:id="f4cc4d3a-4ce0-4bbe-932e-2e4c68a1604d" name="delete:\contacts\(id):sys-ms3contacts-env-api-config" />
+		</munit:execution>
+		<munit:validation>
+			<db:select doc:name="Select" doc:id="a427516d-8dc2-4453-9e73-c8ccb58de920" config-ref="Database_Config">
+				<db:sql><![CDATA[select count(*) cnt
+from contact
+where id =2]]></db:sql>
+			</db:select>
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="5ec1a748-203d-4f4f-9de0-980e8b4a2ed3" actual="#[payload.cnt[0]]" expected="#[0]" />
+		</munit:validation>
+	
+</munit:test>
+
+</mule>

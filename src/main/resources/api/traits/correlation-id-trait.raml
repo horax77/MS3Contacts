@@ -1,0 +1,13 @@
+#%RAML 1.0 Trait
+  headers:
+    x-correlation-id:
+      type: string
+      required: true
+      displayName: Correlation ID
+      description: A unique identifier, e.g. uuid.
+  responses:
+    400:
+      body:
+        application/json:
+          example:            
+            message: Invalid or blank Correlation ID. Please pass Unique identifier "x-correlation-id" as part of header.

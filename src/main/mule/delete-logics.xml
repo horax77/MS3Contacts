@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	
+	<flow name="delete:\contacts\(id)\address\(addressId):sys-ms3contacts-env-api-config">
+        <logger level="INFO" doc:name="START" doc:id="7847310f-5b7b-455f-8ae0-ab2498065e7c" message="START delete:\contacts\(id)\address\(addressId) - Id: #[attributes.uriParams.id] - addressId: #[attributes.uriParams.addressId] - #[vars.correlationId]"/>
+		<db:delete doc:name="Address" doc:id="24de6bd3-7589-4785-a229-440cad9b2c5e" config-ref="Database_Config">
+			<db:sql ><![CDATA[delete from ContactAdress where Id = :Id and ContactId = :ContactId]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{ContactId: attributes.uriParams.id,
+ Id: attributes.uriParams.addressId
+}]]]></db:input-parameters>
+		</db:delete>
+		<flow-ref doc:name="NotFoundControl_SFlow" doc:id="ef7e839f-ae90-4b8b-96d2-b6fd6b020f38" name="NotFoundControl_SFlow" />
+		<ee:transform doc:name="Response" doc:id="d5135efd-9544-4546-866a-d4e36b2fd32a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="END" doc:id="2ae4f421-016a-49ad-a73b-3b571fdc7f86" message="END delete:\contacts\(id)\address\(addressId) - Id: #[attributes.uriParams.id] - addressId: #[attributes.uriParams.addressId] - #[vars.correlationId]" />
+    
+</flow>
+    <flow name="delete:\contacts\(id)\communications\(communicationId):sys-ms3contacts-env-api-config">
+        <logger level="INFO" doc:name="START" doc:id="82ea52b3-3fe4-474b-8dda-b431f85ce135" message="START delete:\contacts\(id)\communications\(communicationId) - Id: #[attributes.uriParams.id] - communicationId: #[attributes.uriParams.communicationId] - #[vars.correlationId]"/>
+		<db:delete doc:name="Communication Channel" doc:id="c9ca8607-5f65-4fcd-9adc-aa6bc1ddc991" config-ref="Database_Config">
+			<db:sql ><![CDATA[delete from ContactCommunicationChannel where Id = :Id and ContactId = :ContactId]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{ContactId: attributes.uriParams.id,
+ Id: attributes.uriParams.communicationId
+}]]]></db:input-parameters>
+		</db:delete>
+		<flow-ref doc:name="NotFoundControl_SFlow" doc:id="a457a505-cdee-43be-9828-ed0cc3dba3da" name="NotFoundControl_SFlow"/>
+		<ee:transform doc:name="Response" doc:id="db7fcf14-2973-46fa-8b46-33cfba829a23" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="END" doc:id="af91c29d-7edd-4477-826d-261f59f61cb0" message="START delete:\contacts\(id)\communications\(communicationId) - Id: #[attributes.uriParams.id] - communicationId: #[attributes.uriParams.communicationId] - #[vars.correlationId]"/>
+    
+</flow>
+    <flow name="delete:\contacts\(id):sys-ms3contacts-env-api-config" doc:id="c7ff599b-8e7e-4dc8-89f4-94f122721525">
+        <logger level="INFO" doc:name="START" doc:id="43e59e49-267a-4fc4-9537-03271ce77b52" message="START delete:\contacts\(id) - Id: #[attributes.uriParams.id] - #[vars.correlationId]"/>
+		<set-variable value="#[attributes.uriParams.id]" doc:name="Set conctactId" doc:id="c087c2b6-724b-43b0-a6cb-527756c37510" variableName="contactId"/>
+		<try doc:name="Try" doc:id="152ae3ba-b9a4-4873-9253-19a859562d8b" transactionalAction="ALWAYS_BEGIN">
+			<db:delete doc:name="Adress" doc:id="786fd2a9-3f5c-4302-9b59-0e35c8074c6e" config-ref="Database_Config">
+				<db:sql ><![CDATA[delete from ContactAdress where ContactId = :ContactId]]></db:sql>
+				<db:input-parameters ><![CDATA[#[{ContactId: vars.contactId}]]]></db:input-parameters>
+			</db:delete>
+			<db:delete doc:name="Communication" doc:id="b0f9f320-ae99-4ba8-a634-e903fa40ab47" config-ref="Database_Config">
+				<db:sql ><![CDATA[delete from ContactCommunicationChannel where ContactId = :ContactId]]></db:sql>
+				<db:input-parameters ><![CDATA[#[{ContactId: vars.contactId}]]]></db:input-parameters>
+			</db:delete>
+			<db:delete doc:name="Contact" doc:id="248ebda7-06a3-4def-b64b-65b69c539c8e" config-ref="Database_Config" >
+				<db:sql ><![CDATA[delete from Contact where id = :id]]></db:sql>
+				<db:input-parameters ><![CDATA[#[{id: vars.contactId}]]]></db:input-parameters>
+			</db:delete>
+			<flow-ref doc:name="NotFoundControl_SFlow" doc:id="d6272a59-015b-402b-acf7-18b8790a3cec" name="NotFoundControl_SFlow"/>
+			<error-handler >
+				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="bbffe8f8-7a0c-4149-afad-19b30f48fc39" >
+					<logger level="INFO" doc:name="Logger" doc:id="f991a405-5b1a-4920-b620-036ed5b32457" message="ERROR trying to delete a Contact - #[vars.correlationId]"/>
+				</on-error-propagate>
+			</error-handler>
+		</try>
+		<ee:transform doc:name="Response" doc:id="8e35ab5e-e5d8-4d6d-b3f8-9000e1519ac2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="END" doc:id="f73c4937-2294-4a15-8c02-d6899a94de62" message="END delete:\contacts\(id) - Id: #[attributes.uriParams.id] - #[vars.correlationId]"/>
+    
+</flow>	
+	
+</mule>

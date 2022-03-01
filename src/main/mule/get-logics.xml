@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	
+	<sub-flow name="get-ReusableQuery_SFlow" doc:id="e3592655-e649-4664-94a3-2c6c6a590b1f" >
+		<ee:transform doc:name="Base Query" doc:id="f1417230-1329-4cb2-9bc8-41ffeb1a4304" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="vBaseQuery" ><![CDATA[%dw 2.0
+output application/java
+---
+"Select c.Id, c.LastName, c.FirstName, c.DOB, c.Gender, c.Title ,
+	   ca.Id AddressId, ca.typeId AddressTypeId, at.description AddressTypeDesc, ca.Street, ca.StreetNumber, ca.Unit, ca.City, ca.StateId, st.Description StateDesc, ZipCode,
+	   ccc.Id CommunicationChannelId, ccc.TypeId CommunicationTypeId, ccType.description CommunicationTypeDesc, ccc.value, ccc.preferredFlg
+From Contact c
+	left join ContactAdress ca on ca.ContactId = c.Id
+	  left join AdressType at on at.id = ca.typeId
+	  left join State st on st.id = ca.StateId
+	left join ContactCommunicationChannel ccc on ccc.ContactId = c.Id
+	  left join CommunicationChannelType ccType on ccType.Id = ccc.TypeId  "
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow>
+	<flow name="get:\contacts:sys-ms3contacts-env-api-config" doc:id="2bcb6b61-ba46-4b1b-8f08-51879be9885c" >
+		<logger level="INFO" doc:name="START" doc:id="0ad96f33-50c2-4cda-8f49-d7511181c6ce" message="START GET\Contacts - #[vars.correlationId]"/>
+		<flow-ref doc:name="get-ReusableQuery_SFlow" doc:id="7f76bba0-b8a5-4004-8d4c-29223270f386" name="get-ReusableQuery_SFlow"/>
+		<ee:transform doc:name="Dinamyc Query" doc:id="7cc85b50-a3de-4fa9-bda7-c5475fa154d3" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+vars.vBaseQuery ++ 
+"order by " ++ attributes.queryParams.orderBy ++ " " ++ attributes.queryParams.order ++ "
+OFFSET " ++ attributes.queryParams.offset  ++ " ROWS
+FETCH FIRST " ++ attributes.queryParams.limit ++ " ROWS ONLY"]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<db:select doc:name="Contacts List" doc:id="2afe9c52-efce-416b-a5ff-16910ca22d9d" config-ref="Database_Config">
+			<db:sql ><![CDATA[#[payload]]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Standart Response" doc:id="30068038-a887-4001-a9ad-635a948ba29a" >
+			<ee:message >
+				<ee:set-payload resource="resource/dwl/GetContactResponse.dwl" />
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="END" doc:id="e633b898-6192-4389-9249-c4812f6abc26" message="END GET\Contacts - #[vars.correlationId]"/>
+
+</flow>
+	<flow name="get:\contacts\(id):sys-ms3contacts-env-api-config" doc:id="b999ef85-99d7-4ded-bfab-b0333cff5462" >
+		<logger level="INFO" doc:name="START" doc:id="43d7966b-0aa3-4edf-b52e-09e2e30cb632" message="START GET\Contacts by ID :  #[attributes.uriParams.id]  - #[vars.correlationId]"/>
+		<flow-ref doc:name="get-ReusableQuery_SFlow" doc:id="0768f4c3-3148-46d7-9dfb-56f998c5bed1" name="get-ReusableQuery_SFlow"/>
+		<ee:transform doc:name="Dinamyc Query" doc:id="4f26feee-b4ce-472d-b33f-086fcb5f4b1d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+vars.vBaseQuery ++
+"where c.Id = " ++ attributes.uriParams.id]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<db:select doc:name="Contact By Id" doc:id="6c472830-81d6-400e-8678-5f570dd06ceb" config-ref="Database_Config">
+			<db:sql ><![CDATA[#[payload]]]></db:sql>
+		</db:select>
+		<flow-ref doc:name="NotFoundControl_SFlow" doc:id="47993e3c-017c-4f44-9f30-817d854db703" name="NotFoundControl_SFlow"/>
+		<ee:transform doc:name="Startdar Response" doc:id="b05ef6f8-e637-41a6-ab37-cf0bc7ed8e8a" >
+			<ee:message >
+				<ee:set-payload resource="resource/dwl/GetContactResponse.dwl" />
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="Set Response to Object" doc:id="c666a6fc-59e5-45eb-a46a-660e6e547f22" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload reduce ($ ++ $$)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="END" doc:id="f6dbd926-0c5d-4408-b99c-3ee6851d3617" message="END GET\Contacts by ID - #[vars.correlationId]"/>
+	</flow>
+		
+	
+	
+</mule>

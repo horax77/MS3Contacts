@@ -1,0 +1,174 @@
+#%RAML 1.0
+title: sys-ms3contacts-env-api
+description: API Desing to manange CRUD contacts
+version: 1.0
+
+mediaType: 
+  - application/json
+protocols:
+  - HTTPS
+
+types:
+  contact-type: !include types/contact-type.raml
+  contact-update-type: !include types/contact-update-type.raml
+  contact-address-type: !include ../api/types/contact-address-type.raml
+  contact-communication-type: !include ../api/types/contact-communication-type.raml
+ 
+     
+traits:
+  std-authentication-trait:  !include ../api/traits/client-id-enforcement-trait.raml
+  std-correlationId-trait:  !include ../api/traits/correlation-id-trait.raml
+  pageable-trait:  !include ../api/traits/pageable-trait.raml
+  orderable-trait: !include ../api/traits/orderable-trait.raml
+  filterable-trait: !include ../api/traits/filterable-trait.raml
+
+/contacts:
+  displayName: Contacts
+  get:
+    is: [pageable-trait,filterable-trait,orderable-trait,std-authentication-trait,std-correlationId-trait]
+    displayName: List of Contacts
+    description: List of Contacts. Can be filtered by lastName, firsName, DOB and title . The results is paginated.
+    responses:
+      200:
+        body:
+          application/json:
+            type: array
+            items: contact-type              
+            examples: 
+              ouptput: !include ../api/examples/contact-array-type-example.raml
+  post:
+    is: [std-authentication-trait,std-correlationId-trait]
+    displayName: Add a new Contact
+    description: Add a new Contact. 
+    body:
+      application/json:
+        type: contact-type
+    responses:
+      201:
+        body:
+          application/json:
+            description: ID of the contact created
+            example: 
+              value:
+                id: 9
+              
+  /{id}:
+    description: 'Specific resource operations: get, delete, put'
+    displayName: Contacts By ID
+    get:
+      is: [std-authentication-trait,std-correlationId-trait]
+      displayName: Get a Contact
+      description: Get a Contact by Id
+      responses:
+        200:
+          body:
+            application/json:
+              type: contact-type              
+              examples: 
+                output: !include ../api/examples/contact-object-type-example.raml
+    put:
+      is: [std-authentication-trait,std-correlationId-trait]
+      displayName: Update a Contact
+      description: Update a Contact by Id. Every object present (Information, Address, Contact) will overwrite only those fields are present.
+      body:
+        application/json:
+          type: contact-update-type
+          examples: 
+            output: !include ../api/examples/contact-update-type-example.raml         
+      responses:
+        200:
+
+    delete:
+      is: [std-authentication-trait,std-correlationId-trait] 
+      displayName: Delete a Contact
+      description: Delete a Contact by Id     
+      responses:
+        200:
+
+    /address:
+      displayName: Address
+      description: 'General operations: GET,POST'
+      post:
+        displayName: Add a new address
+        description: add a new address to the contact
+        is: [std-authentication-trait,std-correlationId-trait]
+        body:
+          application/json:
+            type: contact-address-type
+            examples: 
+              output:  !include examples/address-example.raml       
+        responses:
+          201:
+            body:
+              application/json:
+                description: ID of the address created
+                example: 
+                  value:
+                    id: 8 
+
+      /{addressId}:
+        displayName: Address By Id 
+        put:
+          is: [std-authentication-trait,std-correlationId-trait]
+          displayName: Update a contact addres
+          description: Update a contact address information by address Id 
+          body:
+            application/json:
+              type: contact-address-type
+              examples: 
+                output: !include examples/address-example.raml   
+          responses:
+            200:
+
+        delete:
+          is: [std-authentication-trait,std-correlationId-trait]
+          displayName: Delete a Contact address 
+          description: Delete a Contact address information by Id     
+          responses:
+            200:
+             
+
+    /communications:
+      displayName: Communications
+      description: 'General operations: GET, POST'
+      post:
+        displayName: Add a new Communication channel
+        description: add a new Communication channel
+        is: [std-authentication-trait,std-correlationId-trait]
+        body:
+          application/json:
+            type: contact-communication-type
+            examples: 
+              output: !include ../api/examples/communication-example.raml 
+        responses:
+          201:
+            body:
+              application/json:
+                description: ID of the communication object created
+                example: 
+                  value: 12  
+
+      /{communicationId}:
+        displayName: Communication By Id 
+        description: operations over each element PUT, DELETE
+        put:
+          is: [std-authentication-trait,std-correlationId-trait]
+          displayName: Update a Communication channel
+          description: Update a Communication channel by Id 
+          body:
+            application/json:
+              type: contact-communication-type
+              examples: 
+                output: !include ../api/examples/communication-example.raml 
+          responses:
+            200:
+
+        delete:
+          is: [std-authentication-trait,std-correlationId-trait]
+          displayName: Delete a Communication Channel 
+          description: Delete a Communication Channel by Id     
+          responses:
+            200:
+                      
+        
+

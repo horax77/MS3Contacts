@@ -1,0 +1,10 @@
+apiId: "17660072"
+
+db:
+  host: "myactionsDev.c1faaovla8cl.us-east-1.rds.amazonaws.com"
+  port: "1433"
+  user: "admin"
+  pass: "![4qPt/FCb9n0JfekAOaGe6Q==]"
+  name: "ContactTest"
+
+keystore.password: "![4+UKp0+4NjvxSx0QBVF3pA==]"

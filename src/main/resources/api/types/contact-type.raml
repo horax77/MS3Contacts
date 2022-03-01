@@ -1,0 +1,50 @@
+#%RAML 1.0 DataType
+description: Contact 
+type: object
+properties:
+  identification:
+    properties:
+      id:
+        description: Contact unique Key
+        type: integer
+        required: false
+        example: 1
+      firstName:
+        description: Contact first name
+        type: string
+        example: 'Bob'
+        required: false
+      lastName:
+        description: Conctact last name
+        type: string
+        example: 'Frederick'
+        required: false
+      DOB:
+        description: Contact Date of birth
+        type: date-only
+        example: 1980-06-21
+        required: false
+      gender:
+        description: Contact Gender
+        type: string
+        example: 'M'
+        required: false
+      title:
+        description: Contact Job Title
+        type: string
+        example: 'Manager'
+        required: false
+      address:
+        type: array
+        items: !include contact-address-type.raml
+        required: false
+      communication:
+        type: array
+        required: false
+        items: !include contact-communication-type.raml
+  address:
+    type: array
+    items: !include contact-address-type.raml
+  communications:
+    type: array
+    items: !include contact-communication-type.raml

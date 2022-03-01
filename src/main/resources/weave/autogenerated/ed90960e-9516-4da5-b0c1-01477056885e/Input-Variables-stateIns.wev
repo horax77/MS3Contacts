@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_ed90960e_9516_4da5_b0c1_01477056885e_Input_Variables_stateIns = Array<Number>
+

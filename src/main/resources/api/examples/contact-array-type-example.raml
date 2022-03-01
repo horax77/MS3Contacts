@@ -1,0 +1,35 @@
+#%RAML 1.0 NamedExample
+[{
+identification:
+{    
+"id": 1,
+"firstName": "Bob",
+"lastName": "Frederick",
+"DOB": 1980-06-21,
+"gender": "M",
+"title": "Manager"
+},
+address: [{
+    "id": 1,
+	"typeId": 1,
+    "typeDesc": "home",
+    "number": 1234,
+    "street": "blah blah St",
+    "Unit": "1 a",
+    "City": "Somewhere",
+    "StateId": 1,
+    "StateDesc": "WV",
+    "zipcode": "12345"	
+}],
+communications: [
+{
+      "type": "email",
+      "value": "bfe@sample.com",
+        "preferred" : true
+    },
+    {
+      "type": "cell",
+      "value": "304-555-8282"
+    }	
+]
+}]
